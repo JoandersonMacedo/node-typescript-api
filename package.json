@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node dist/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src ./test --ext .ts",
+    "lint:fix": "eslint ./src ./test --ext .ts --fix",
+    "test": "echo \"Error: no test specified\" && exit 1" 
   },
   "keywords": [
     "node.js",
@@ -16,9 +18,12 @@
   "author": "Joanderson Macedo",
   "license": "ISC",
   "devDependencies": {
-    "@types/module-alias": "^2.0.4",
-    "@types/node": "^22.13.0",
-    "typescript": "^5.7.3"
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "16",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.5.0",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
     "module-alias": "^2.2.3"
