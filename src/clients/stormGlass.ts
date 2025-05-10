@@ -33,6 +33,12 @@ export interface ForecastPoint {
   windSpeed: number;
 }
 
+export class StormGlassUnexpectedResponseError extends InternalError {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export class ClientRequestError extends InternalError {
   constructor(message: string) {
     const internalMessage =
@@ -49,7 +55,7 @@ export class StormGlassResponseError extends InternalError {
   }
 }
 
-const stormGlassResourceConfig: IConfig = config.get(
+const stormglassResourceConfig: IConfig = config.get(
   'App.resources.StormGlass'
 );
 
@@ -63,32 +69,32 @@ export class StormGlass {
   public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `${stormGlassResourceConfig.get(
+        `${stormglassResourceConfig.get(
           'apiUrl'
         )}/weather/point?lat=${lat}&lng=${lng}&params=${
           this.stormGlassAPIParams
         }&source=${this.stormGlassAPISource}`,
         {
           headers: {
-            Authorization: stormGlassResourceConfig.get('apiToken'),
+            Authorization: stormglassResourceConfig.get('apiToken'),
           },
         }
       );
 
-      return this.normalizedResponse(response.data);
+      return this.normalizeResponse(response.data);
     } catch (err) {
-      const axiosError = err as AxiosError;
       if (err instanceof Error && HTTPUtil.Request.isRequestError(err)) {
         const error = HTTPUtil.Request.extractErrorData(err);
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify(error.data)} Code: ${error.status}`
         );
       }
+
       throw new ClientRequestError(JSON.stringify(err));
     }
   }
 
-  private normalizedResponse(
+  private normalizeResponse(
     points: StormGlassForecastResponse
   ): ForecastPoint[] {
     return points.hours.filter(this.isValidPoint.bind(this)).map((point) => ({
