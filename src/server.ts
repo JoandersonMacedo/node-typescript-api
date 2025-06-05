@@ -1,7 +1,7 @@
-import bodyParser from 'body-parser';
 import './util/module-alias';
 import { Server } from '@overnightjs/core';
 import { ForecastController } from './controllers/forecast';
+import bodyParser from 'body-parser';
 import { Application } from 'express';
 import * as database from '@src/database';
 import { BeachesController } from './controllers/beaches';
@@ -28,15 +28,15 @@ export class SetupServer extends Server {
     this.addControllers([forecastController, beachesController]);
   }
 
+  public getApp(): Application {
+    return this.app;
+  }
+
   private async databaseSetup(): Promise<void> {
     await database.connect();
   }
 
   public async close(): Promise<void> {
     await database.close();
-  }
-
-  public getApp(): Application {
-    return this.app;
   }
 }
